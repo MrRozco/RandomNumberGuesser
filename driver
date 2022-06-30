@@ -1,0 +1,142 @@
+/* Class: CMSC203 CRN 46519
+ Program: Assignment #2
+ Instructor: Farnaz Eivazi
+ Summary of Description: Build an application that will receive a guess and report if your 
+guess is the random number that was generated.  Your application will narrow down the choices
+ according to your previous guesses and continue to prompt you to enter a guess until you 
+ guess correctly.  
+ Due Date: 06/30 /2022 
+ * Platform/compiler:Eclipse
+ * I pledge that I have completed the programming assignment independently.
+   I have not copied the code from a student or any source.
+   I have not given my code to any student.
+   Print your Name here: Bryan Orozco
+*/
+
+
+import java.util.Scanner;
+
+
+public class RandomNumberGuesser {
+	
+	//Let us declare public variables that we can access throughout the different methods
+	public static Scanner input;
+	public static int randNum,
+					  nextGuess,
+					  lowGuess,
+					  highGuess;
+	public static RNG rngClass;
+	
+	/*The main method should  include calling methods throughout this class and 
+	 * to create new object from RNG class, and allow program to repeat
+	 */
+	
+	public static void main(String[] args) {
+		
+		rngClass = new RNG(); //creates a rngClass object		
+		
+		/*
+		 * While loop allows user to play multiple times. We initialized at yes
+		 * so user does not get asked before playing for the first time
+		 * but can change after user is asked for an input
+		 */
+		
+		String question = "yes";
+		while ( question.equalsIgnoreCase("yes") )	{
+			setUpGame();
+			startGame();
+			System.out.println("Try again? (yes or no)");
+			question = input.next();
+			System.out.println("");
+		}
+		
+		/*
+		 * Once the user input anything other than yes,
+		 * program will terminate by saying the following
+		 */
+		
+		System.out.println("Thanks for playing...");
+		System.out.println("Programmer:");
+		System.out.println("Bryan Orozco");
+		
+	}	
+	
+	/*
+	 * This method start at the beginning of each game
+	 * resets lowGuess, highGuess, creates a new number, and count goes back to zero
+	 * by calling the resetCount() method with the rngClass object
+	 */
+	public static void setUpGame() {
+		lowGuess = 0;
+		highGuess = 100;
+		randNum = rngClass.rand();
+		rngClass.resetCount();
+	}
+	
+	/*
+	 * This method will contain user interface. Will prompt user with questions
+	 * will save their input, and depending on input will display a message
+	 * 
+	 */
+	
+	public static void startGame ()	{
+		
+		input = new Scanner(System.in);
+		System.out.println("Enter your first guess");
+		nextGuess = input.nextInt();
+		
+		//The following while loop will make this method repeat until user gets the right answer
+		
+		while (nextGuess != randNum)	{
+			
+			 /*The following while loop will make this method repeat
+			 * until user enters number between the lowGuess and highGuess ( user's choice, 
+			 * lowGuess, and highGuess are all being passed as parameters)
+			 */
+			
+			if (!rngClass.inputValidation(nextGuess, lowGuess, highGuess))	{
+				
+				nextGuess = input.nextInt();   //ask for user input again to prevent infinite loop
+				continue;
+			}
+			
+			/*The get count method adds one to the count 
+			 * 
+			 */
+			
+			System.out.println("Number of guesses is " + rngClass.getCount());
+			
+			/*
+			 * if the user's guess is higher than the random number,
+			 * such number will get applied to the next highGuess
+			 */
+			
+			if (nextGuess > randNum)	{  
+										
+				highGuess = nextGuess;
+				System.out.println("Your guess is too high");
+			}
+			/*
+			 * if the user's guess is lower than the random number,
+			 * such number will get applied to the next lowGuess
+			 */
+			
+			else if (nextGuess < randNum){
+				
+				lowGuess = nextGuess;
+				System.out.println("Your guess is too low");
+			}
+			
+			/*
+			 * We will now display the new low and high until the user gets the right input.
+			 * we will allow for further input
+			 */
+			
+			System.out.println("Enter your next guess between " + lowGuess + " and " + highGuess);
+			nextGuess = input.nextInt();
+		}
+		System.out.println("Number of guesses is " + rngClass.getCount());
+		System.out.println("Congratulations, you guessed correctly");
+	}
+}
+
